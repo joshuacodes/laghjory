@@ -1,54 +1,34 @@
 #!/usr/bin/env python
 # -*- coding: utf8 -*-
 
-import os
 import sys
-import time
+import curses
+import argparse
+import logging
+import main_menu
 
-SPEED = 0.20
-DISTANCE = 80
-i = 0
-SPACES = ""
-LINES = ""
+def main(stdscr, log_file, log_level):
 
-print("""\
-################################################################################
-#                                                                              #
-# This is Lucas's special game.                                                #
-#                                                                              #
-#                       #                          #                           #
-#                      ###                        ###                          #
-#                       #                          #                           #
-#                                                                              #
-#                                    #                                         #
-#                                   ###                                        #
-#                                    #                                         #
-#                       #                          #                           #
-#                        ##                      ##                            #
-#                        #                        #                            #
-#                         #                      #                             #
-#                          #                    #                              #
-#                           ####################                               #
-#                                                                              #
-################################################################################
-""")
+    # Configure the logging module
+    logging.basicConfig(filename=args.log_file, level=log_level, format='%(asctime)s %(levelname)-8s %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
 
-print("Hello, Luke.")
-print("I am your father")
-time.sleep(5)
-os.system('cls')
+    height, width = stdscr.getmaxyx()
+    stdscr.addstr("The terminal is {}x{} characters".format(width, height))
+    stdscr.refresh()
 
-for i in range(0, DISTANCE):
-    print(LINES)
-    print(SPACES + "        #     #       ")
-    print(SPACES + "         #   #        ")
-    print(SPACES + "          # #         ")
-    print(SPACES + "           #          ")
-    print(SPACES + "          # #         ")
-    print(SPACES + "         #   #        ")
-    print(SPACES + "        #     #       ")
+    main_menu.main_menu(stdscr)
 
-    time.sleep(SPEED)
-    os.system('cls')
-    SPACES = SPACES + " "
-    LINES = LINES + "\n"
+# Call the main function if the script is run directly
+if __name__ == "__main__":
+    # Create the argument parser and add arguments
+    parser = argparse.ArgumentParser(description="Start the game")
+    parser.add_argument('--log-file', type=str, help='the name of the log file', default='testing.log')
+    parser.add_argument('--log-level', type=str, help='the logging level', choices=['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'], default='DEBUG')
+    
+    # Parse the arguments
+    args = parser.parse_args()
+    
+    # Convert log level to the corresponding logging level
+    log_level = getattr(logging, args.log_level.upper())
+
+    curses.wrapper(main, args.log_file, log_level)

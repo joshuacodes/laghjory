@@ -14,7 +14,7 @@ def greet_player(stdscr):
     """Greets the player."""
     stdscr.addstr(0, 0, "Luke, I am your father.")
     stdscr.refresh()
-    time.sleep(5)
+    time.sleep(2)
     clear_screen()
 
 def print_animation(stdscr):
@@ -57,8 +57,8 @@ def interactive_game(stdscr):
                 xwing[0][0] -= 1
             elif next_key == ord('l'):
                 xwing[0][1] += 1
-            elif next_key == ord('x'):
-                break
+            elif next_key == ord('x'): # Exit the game if the user presses 'x'
+                return 1
 
         w.addch(int(xwing[0][0]), int(xwing[0][1]), '^')
         w.refresh()
