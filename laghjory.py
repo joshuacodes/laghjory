@@ -10,11 +10,17 @@ import main_menu
 def main(stdscr, log_file, log_level):
 
     # Configure the logging module
+
+    # Future work: Add a rotating file handler
+    # handler = logging.handlers.RotatingFileFileHandler('game.log', maxBytes=10*1024*1024, backupCount=10)
     logging.basicConfig(filename=args.log_file, level=log_level, format='%(asctime)s %(levelname)-8s %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
 
+    logging.debug("Main function has started.")
+
     height, width = stdscr.getmaxyx()
-    stdscr.addstr("The terminal is {}x{} characters".format(width, height))
-    stdscr.refresh()
+    
+    logging.debug("Collected the terminal size.")
+    logging.debug("The terminal is {}x{} characters".format(width, height))
 
     main_menu.main_menu(stdscr)
 

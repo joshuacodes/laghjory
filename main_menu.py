@@ -1,6 +1,7 @@
 import time
 import curses
 import curses.textpad
+import logging
 
 import star_wars
 import game_two
@@ -24,6 +25,10 @@ def print_intro(stdscr):
     stdscr.refresh()
 
 def main_menu(stdscr):
+
+    logging.debug("Main menu function has started.")
+
+
     """Displays the main menu and processes user selection."""
     while True:
         print_intro(stdscr)
