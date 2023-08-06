@@ -5,24 +5,21 @@ import sys
 import curses
 import argparse
 import logging
+import logging.handlers
+from logging.handlers import RotatingFileHandler
 import main_menu
 
-def main(stdscr, log_file, log_level):
+def main(log_file, log_level):
 
     # Configure the logging module
+    handler = logging.handlers.RotatingFileHandler(filename=log_file, maxBytes=1*1024*1024, backupCount=10)
+    logging.basicConfig(handlers=[handler], level=log_level, format='%(asctime)s %(levelname)-8s %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
+    logging.debug("")
+    logging.debug("NEW GAME SESSION STARTED")
+    logging.debug("")
 
-    # Future work: Add a rotating file handler
-    # handler = logging.handlers.RotatingFileFileHandler('game.log', maxBytes=10*1024*1024, backupCount=10)
-    logging.basicConfig(filename=args.log_file, level=log_level, format='%(asctime)s %(levelname)-8s %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
-
-    logging.debug("Main function has started.")
-
-    height, width = stdscr.getmaxyx()
-    
-    logging.debug("Collected the terminal size.")
-    logging.debug("The terminal is {}x{} characters".format(width, height))
-
-    main_menu.main_menu(stdscr)
+    # Initialize curses and start the main menu loop
+    curses.wrapper(main_menu.main)
 
 # Call the main function if the script is run directly
 if __name__ == "__main__":
@@ -37,4 +34,5 @@ if __name__ == "__main__":
     # Convert log level to the corresponding logging level
     log_level = getattr(logging, args.log_level.upper())
 
-    curses.wrapper(main, args.log_file, log_level)
+    # Call the main function
+    main(args.log_file, log_level)

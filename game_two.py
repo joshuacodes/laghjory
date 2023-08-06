@@ -1,6 +1,17 @@
 import time
+import curses
+import logging
 
-def main():
-    """A placeholder for a second game."""
-    print("Game Two is still under development!")
-    time.sleep(3)
+def main(stdscr):
+    # A placeholder for a second game.
+    logging.debug("Game Two function has started.")
+    maxY, maxX = stdscr.getmaxyx()
+    # Put message in middle of screen.
+    stdscr.addstr(maxY//2, maxX//2, "Game Two is still under development!")
+    stdscr.refresh()
+    time.sleep(2)
+    return 1
+
+# Call the main function if the script is run directly
+if __name__ == "__main__":
+    curses.wrapper(main)
