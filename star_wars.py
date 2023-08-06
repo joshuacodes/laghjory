@@ -1,6 +1,7 @@
 import os
 import time
 import curses
+import random
 import logging
 
 # Constants
@@ -29,7 +30,32 @@ def clear_screen():
 #        star_wars_win.refresh()
 #        time.sleep(SPEED)
 #        star_wars_win.clear()
-        
+
+# Randomly generate a number of stars
+def generate_stars(star_wars_win):
+    maxY, maxX = star_wars_win.getmaxyx()
+    minY, minX = star_wars_win.getbegyx()
+    logging.debug("Star Wars window size is {}x{}.".format(maxY, maxX))
+    star_wars_win.border()
+    star_wars_win.refresh()
+    
+    star_wars_win.keypad(1)
+    star_wars_win.timeout(100)
+
+    # Generate a list of stars
+    stars = []
+    for i in range(0, 10):
+        star_x = random.randint(minX+1, maxX-1)
+        star_y = random.randint(minY+1, maxY-1)
+        stars.append([star_y, star_x])
+
+    # Print the stars
+    for star in stars:
+        star_wars_win.addch(int(star[0]), int(star[1]), '*')
+
+    return stars
+
+
 def interactive_game(star_wars_win):
     # Handles user input and moving the X-wing fighter.
     maxY, maxX = star_wars_win.getmaxyx()
@@ -38,8 +64,6 @@ def interactive_game(star_wars_win):
     star_wars_win.border()
     star_wars_win.refresh()
     
-    star_wars_win = curses.newwin(maxY, maxX, 0, 0)
-
     star_wars_win.keypad(1)
     star_wars_win.timeout(100)
 
@@ -51,6 +75,9 @@ def interactive_game(star_wars_win):
     ]
 
     star_wars_win.addch(int(xwing[0][0]), int(xwing[0][1]), '^')
+
+    # Print the stars
+    stars = generate_stars(star_wars_win)
 
     while True:
         next_key = star_wars_win.getch()

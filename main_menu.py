@@ -89,6 +89,8 @@ def main(stdscr):
                 clear_screen(stdscr)
                 game_two.main(stdscr)
                 clear_screen(menu_win)
+                stdscr.border()
+                stdscr.refresh()
                 center_text_block(menu_win, menu_text)
         elif chr(key) == "3":
                 logging.debug("User selected Game Three.")
