@@ -5,6 +5,7 @@ import logging
 
 import star_wars
 import game_two
+import game_three
 
 # Utility function to clear the screen regardless of OS
 def clear_screen(window):
@@ -57,7 +58,8 @@ def main(stdscr):
     
     menu_options = ["  1. Star Wars                         ",
                  "  2. Game Two                          ",
-                 "  3. Exit                              ",
+                 "  3. Game Three                        ",
+                 "  4. Exit                              ",
                  ""]
 
     menu_text = menu_heading + menu_options
@@ -89,6 +91,12 @@ def main(stdscr):
                 clear_screen(menu_win)
                 center_text_block(menu_win, menu_text)
         elif chr(key) == "3":
+                logging.debug("User selected Game Three.")
+                clear_screen(stdscr)
+                game_three.main(stdscr)
+                clear_screen(menu_win)
+                center_text_block(menu_win, menu_text)
+        elif chr(key) == "4":
                 logging.debug("User selected Exit.")
                 break 
         elif key == curses.KEY_UP and current_row > 11:
