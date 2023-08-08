@@ -29,6 +29,22 @@ def display_explosion(window, y, x):
         # Handle any errors caused by trying to print outside the screen boundaries
         pass
 
+def display_shield(window, y, x):
+    # Displays a shield around the X-Wing at the motherhsip.
+    try:
+        logging.debug("Displaying the shield at {}, {}.".format(y, x))
+        window.addch(int(y) - 1, int(x), '-', curses.color_pair(6))
+        window.addch(int(y) + 1, int(x), '-', curses.color_pair(6))
+        window.addch(int(y), int(x) - 1, '(', curses.color_pair(6))
+        window.addch(int(y), int(x) + 1, ')', curses.color_pair(6))
+        window.addch(int(y) - 1, int(x) - 1, '0', curses.color_pair(6))
+        window.addch(int(y) - 1, int(x) + 1, '0', curses.color_pair(6))
+        window.addch(int(y) + 1, int(x) - 1, '0', curses.color_pair(6))
+        window.addch(int(y) + 1, int(x) + 1, '0', curses.color_pair(6))
+    except curses.error:
+        # Handle any errors caused by trying to print outside the screen boundaries
+        pass
+
 # TODO: Add a function to greet the player.
 #def greet_player(star_wars_win):
 #    # Greets the player.
@@ -73,102 +89,151 @@ def generate_stars(star_wars_win):
     return stars
 
 def interactive_game(star_wars_win):
-    # Handles user input and moving the X-wing fighter.
-    maxY, maxX = star_wars_win.getmaxyx()
-    minY, minX = star_wars_win.getbegyx()
-    logging.debug("Star Wars window size is {}x{}.".format(maxY, maxX))
-    logging.debug("Star Wars window position is {}x{}.".format(minY, minX))
-    star_wars_win.border()
-    star_wars_win.refresh()
-    
-    star_wars_win.keypad(1)
-    star_wars_win.timeout(100)
-
-    snk_x = maxX//4
-    snk_y = maxY//2
-
-    xwing = [
-        [snk_y, snk_x],
-    ]
-
-    star_wars_win.addch(int(xwing[0][0]), int(xwing[0][1]), 'X', curses.color_pair(1))
-
-    # Print the stars
-    stars = generate_stars(star_wars_win)
 
     while True:
-        next_key = star_wars_win.getch()
-        if next_key == -1:
-            pass
-        else:
-            if next_key == ord('h') or next_key == curses.KEY_LEFT:
-                # Move the X-wing left but don't let it go off the screen
-                if xwing[0][1] > minX+1:
-                    logging.debug("X-wing is at {}.".format(xwing[0]))
-                    xwing[0][1] -= 1
-                    if xwing[0] in stars:
-                        display_explosion(star_wars_win, xwing[0][0], xwing[0][1])
-                        star_wars_win.addstr(xwing[0][0], xwing[0][1]+3, "You burned up in a star!")
-                        star_wars_win.refresh()
-                        time.sleep(2)
-                        return 1
-                elif xwing[0][1] <= minX+1:
-                    star_wars_win.addstr(maxY//2, maxX//2, "You have reached the edge of the galaxy!")
-                    star_wars_win.refresh()
-                    time.sleep(2)
-                    return 1
-            elif next_key == ord('j') or next_key == curses.KEY_DOWN:
-                # Move the X-wing down but don't let it go off the screen
-                if xwing[0][0] < maxY-2:
-                    logging.debug("X-wing is at {}.".format(xwing[0]))
-                    xwing[0][0] += 1
-                    if xwing[0] in stars:
-                        display_explosion(star_wars_win, xwing[0][0], xwing[0][1])
-                        star_wars_win.addstr(xwing[0][0], xwing[0][1]+3, "You burned up in a star!")
-                        star_wars_win.refresh()
-                        time.sleep(2)
-                        return 1
-                elif xwing[0][0] >= maxY-2:
-                    star_wars_win.addstr(maxY//2, maxX//2, "You have reached the edge of the galaxy!")
-                    star_wars_win.refresh()
-                    time.sleep(2)
-                    return 1
-            elif next_key == ord('k') or next_key == curses.KEY_UP:
-                # Move the X-wing up but don't let it go off the screen
-                if xwing[0][0] > minY+1:
-                    logging.debug("X-wing is at {}.".format(xwing[0]))
-                    xwing[0][0] -= 1
-                    if xwing[0] in stars:
-                        display_explosion(star_wars_win, xwing[0][0], xwing[0][1])
-                        star_wars_win.addstr(xwing[0][0], xwing[0][1]+3, "You burned up in a star!")
-                        star_wars_win.refresh()
-                        time.sleep(2)
-                        return 1
-                elif xwing[0][0] <= minY+1:
-                    star_wars_win.addstr(maxY//2, maxX//2, "You have reached the edge of the galaxy!")
-                    star_wars_win.refresh()
-                    time.sleep(2)
-                    return 1
-            elif next_key == ord('l') or next_key == curses.KEY_RIGHT:
-                # Move the X-wing right but don't let it go off the screen
-                if xwing[0][1] < maxX-2:
-                    xwing[0][1] += 1
-                    if xwing[0] in stars:
-                        display_explosion(star_wars_win, xwing[0][0], xwing[0][1])
-                        star_wars_win.addstr(xwing[0][0], xwing[0][1]+3, "You burned up in a star!")
-                        star_wars_win.refresh()
-                        time.sleep(2)
-                        return 1
-                elif xwing[0][1] >= maxX-2:
-                    star_wars_win.addstr(maxY//2, maxX//2, "You have reached the edge of the galaxy!")
-                    star_wars_win.refresh()
-                    time.sleep(2)
-                    return 1
-            elif next_key == ord('x'): # Exit the game if the user presses 'x'
-                return 1
 
-        star_wars_win.addch(int(xwing[0][0]), int(xwing[0][1]), 'X', curses.color_pair(1))
+        # Handles user input and moving the X-wing fighter.
+        maxY, maxX = star_wars_win.getmaxyx()
+        minY, minX = star_wars_win.getbegyx()
+        logging.debug("Star Wars window size is {}x{}.".format(maxY, maxX))
+        logging.debug("Star Wars window position is {}x{}.".format(minY, minX))
+        star_wars_win.border()
         star_wars_win.refresh()
+        
+        star_wars_win.keypad(1)
+        star_wars_win.timeout(100)
+
+        # Initialize starting positions
+        xwing = [[(maxY//4), (maxX//4)]]
+        tie = [[maxY*3//4, maxX*3//4]]
+        mothership = [[random.randint(minY+1, maxY-1), random.randint(minX+1, maxX-1)]]
+        
+        star_wars_win.addch(int(xwing[0][0]), int(xwing[0][1]), 'X', curses.color_pair(1))
+        star_wars_win.addch(int(tie[0][0]), int(tie[0][1]), '8', curses.color_pair(4))
+        star_wars_win.addch(int(mothership[0][0]), int(mothership[0][1]), 'M', curses.color_pair(5))
+
+        # Print the stars
+        stars = generate_stars(star_wars_win)
+
+        exit_key = star_wars_win.getch()
+
+        while True:
+
+            # Move the TIE fighter closer to the X-wing
+            if tie[0][0] > xwing[0][0]:
+                tie[0][0] -= 1
+            elif tie[0][0] < xwing[0][0]:
+                tie[0][0] += 1
+            if tie[0][1] > xwing[0][1]:
+                tie[0][1] -= 1
+            elif tie[0][1] < xwing[0][1]:
+                tie[0][1] += 1
+
+            next_key = star_wars_win.getch()
+            if next_key == -1:
+                pass
+            else:
+                if next_key == ord('h') or next_key == curses.KEY_LEFT:
+                    # Move the X-wing left but don't let it go off the screen
+                    if xwing[0][1] > minX+1:
+                        logging.debug("X-wing is at {}.".format(xwing[0]))
+                        xwing[0][1] -= 1
+                        if xwing[0] in stars:
+                            display_explosion(star_wars_win, xwing[0][0], xwing[0][1])
+                            star_wars_win.addstr(xwing[0][0], xwing[0][1]+3, "You burned up in a star!")
+                            star_wars_win.refresh()
+                            time.sleep(2)
+                            break
+                    elif xwing[0][1] <= minX+1:
+                        star_wars_win.addstr(maxY//2, maxX//2, "You have reached the edge of the galaxy!")
+                        star_wars_win.refresh()
+                        time.sleep(2)
+                        break
+                elif next_key == ord('j') or next_key == curses.KEY_DOWN:
+                    # Move the X-wing down but don't let it go off the screen
+                    if xwing[0][0] < maxY-2:
+                        logging.debug("X-wing is at {}.".format(xwing[0]))
+                        xwing[0][0] += 1
+                        if xwing[0] in stars:
+                            display_explosion(star_wars_win, xwing[0][0], xwing[0][1])
+                            star_wars_win.addstr(xwing[0][0], xwing[0][1]+3, "You burned up in a star!")
+                            star_wars_win.refresh()
+                            time.sleep(2)
+                            break
+                    elif xwing[0][0] >= maxY-2:
+                        star_wars_win.addstr(maxY//2, maxX//2, "You have reached the edge of the galaxy!")
+                        star_wars_win.refresh()
+                        time.sleep(2)
+                        break
+                elif next_key == ord('k') or next_key == curses.KEY_UP:
+                    # Move the X-wing up but don't let it go off the screen
+                    if xwing[0][0] > minY+1:
+                        logging.debug("X-wing is at {}.".format(xwing[0]))
+                        xwing[0][0] -= 1
+                        if xwing[0] in stars:
+                            display_explosion(star_wars_win, xwing[0][0], xwing[0][1])
+                            star_wars_win.addstr(xwing[0][0], xwing[0][1]+3, "You burned up in a star!")
+                            star_wars_win.refresh()
+                            time.sleep(2)
+                            break
+                    elif xwing[0][0] <= minY+1:
+                        star_wars_win.addstr(maxY//2, maxX//2, "You have reached the edge of the galaxy!")
+                        star_wars_win.refresh()
+                        time.sleep(2)
+                        break
+                elif next_key == ord('l') or next_key == curses.KEY_RIGHT:
+                    # Move the X-wing right but don't let it go off the screen
+                    if xwing[0][1] < maxX-2:
+                        xwing[0][1] += 1
+                        if xwing[0] in stars:
+                            display_explosion(star_wars_win, xwing[0][0], xwing[0][1])
+                            star_wars_win.addstr(xwing[0][0], xwing[0][1]+3, "You burned up in a star!")
+                            star_wars_win.refresh()
+                            time.sleep(2)
+                            break
+                    elif xwing[0][1] >= maxX-2:
+                        star_wars_win.addstr(maxY//2, maxX//2, "You have reached the edge of the galaxy!")
+                        star_wars_win.refresh()
+                        time.sleep(2)
+                        break
+                elif next_key == ord('x'): # Exit the game if the user presses 'x'
+                    break
+
+            star_wars_win.addch(int(xwing[0][0]), int(xwing[0][1]), 'X', curses.color_pair(1))
+            star_wars_win.addch(int(tie[0][0]), int(tie[0][1]), '8', curses.color_pair(4))
+            star_wars_win.refresh()
+            
+            # Check for a collision between the TIE fighter and a star
+            if tie[0] in stars:
+                display_explosion(star_wars_win, tie[0][0], tie[0][1])
+                star_wars_win.addstr(tie[0][0], tie[0][1]+3, "The TIE fighter crashed into a star!")
+                star_wars_win.refresh()
+                time.sleep(2)
+                star_wars_win.clear()
+                break
+
+            # Check for a collision between the X-wing and the TIE fighter
+            if xwing[0] == tie[0]:
+                display_explosion(star_wars_win, xwing[0][0], xwing[0][1])
+                star_wars_win.addstr(xwing[0][0], xwing[0][1]+3, "You were shot down by a TIE fighter!")
+                star_wars_win.refresh()
+                time.sleep(2)
+                star_wars_win.clear()
+                break
+
+            # Check for a collision between the X-wing and the Mothership
+            if xwing[0] == mothership[0]:
+                display_shield(star_wars_win, xwing[0][0], xwing[0][1])
+                star_wars_win.addstr(maxY // 2, (maxX // 2) - 10, "You reached safety!")
+                star_wars_win.refresh()
+                time.sleep(2)
+                star_wars_win.clear()
+                break
+
+            star_wars_win.refresh()
+
+        if exit_key == ord('X') or next_key == ord('x'):
+            return 1
 
 def main(stdscr):
     # Main function to run the game.
@@ -183,13 +248,23 @@ def main(stdscr):
 
     # Initialize color pairs
     curses.start_color()
-    curses.init_pair(1, curses.COLOR_BLUE, curses.COLOR_BLACK)  # X-Wing
-    curses.init_pair(2, curses.COLOR_WHITE, curses.COLOR_BLACK) # Path and Stars
-    curses.init_pair(3, curses.COLOR_RED, curses.COLOR_BLACK)   # Explosion
+    curses.init_pair(1, curses.COLOR_YELLOW, curses.COLOR_BLACK)  # X-Wing
+    curses.init_pair(2, curses.COLOR_WHITE, curses.COLOR_BLACK)   # Path and Stars
+    curses.init_pair(3, curses.COLOR_RED, curses.COLOR_YELLOW)    # Explosion
+    curses.init_pair(4, curses.COLOR_MAGENTA, curses.COLOR_GREEN) # TIE Fighter
+    curses.init_pair(5, curses.COLOR_WHITE, curses.COLOR_BLUE)    # Mothership
+    curses.init_pair(6, curses.COLOR_YELLOW, curses.COLOR_CYAN)   # Shield
 
     # Create a new window to display the game.
-    star_wars_win = stdscr.derwin(stdscr_maxY, stdscr_maxX, 0, 0)
+    star_wars_win = stdscr.derwin(stdscr_maxY-4, stdscr_maxX, 0, 0)
     logging.debug("Created the Star Wars window.")
+
+    # Create an instructions window below the main game window
+    instructions_win = stdscr.derwin(3, stdscr_maxX, stdscr_maxY-4, stdscr_minX)
+    logging.debug("Created the instructions window.")
+    instructions_win.border(0)
+    instructions_win.addstr(1, 2, "Move with arrow keys or hjkl. Press 'X' to exit.")
+    instructions_win.refresh()
 
 #    greet_player(star_wars_win)
 #    print_animation(star_wars_win)

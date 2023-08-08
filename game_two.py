@@ -7,6 +7,18 @@ def main(stdscr):
     logging.debug("Game Two function has started.")
     maxY, maxX = stdscr.getmaxyx()
     # Put message in middle of screen.
+    game_board = """
+   |   |   
+   |   |   
+___|___|___
+   |   |   
+   |   |   
+___|___|___
+   |   |   
+   |   |   
+   |   |   
+"""
+    stdscr.addstr(maxY//4, maxX//4, game_board)
     stdscr.addstr(maxY//2, maxX//2, "Game Two is still under development!")
     stdscr.refresh()
     time.sleep(2)
